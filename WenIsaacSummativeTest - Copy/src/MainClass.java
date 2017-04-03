@@ -18,7 +18,6 @@ interface Observable{
 }
 /** TODO:
 	- Main Menu
-	- -Separate Gui- (too hard)
  **/
 public class MainClass extends Applet implements ActionListener, KeyListener, Observable{
 	Timer timer = new Timer(10, this);									//Declare timer and init
