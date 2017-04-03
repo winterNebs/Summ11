@@ -25,10 +25,10 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Ob
 	Graphics buffer;													//Double buffer drawer
 	private static ArrayList<Observer> ObserverList = new ArrayList<Observer>();	//Declare and init observer list
 	static Point2D PLAY_FIELD_SIZE;										//Supposed to be a constant, but can't actually set this until i set the size)
-	private ArrayList<Entity> entities = new ArrayList();
+	private ArrayList<Entity> entities = new ArrayList();				//Creates a list of all entities (players and bosses) for generalization purposes (co-op maybe)
 	public void init(){		
 		this.addKeyListener(this);										//Adds a keylistener
-		this.setSize(1600,900);											//Set window size
+		this.setSize(2500,1500);											//Set window size
 		PLAY_FIELD_SIZE  = new Point2D.Double(this.getWidth()/4*3, this.getHeight());	//Sets a "constant" (not really because things)
 		offscreen = createImage(this.getWidth(),this.getHeight());		//Initialized the buffer image
 		buffer = offscreen.getGraphics();								//Sets the buffer to draw on offscreen
@@ -38,10 +38,14 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Ob
 		buffer.setColor(Color.black);									//Sets color of playfield to black
 		buffer.fillRect(0, 0, (int)PLAY_FIELD_SIZE.getX(), (int)PLAY_FIELD_SIZE.getY());	//Draws the playfeild
 		for(int i = 0; i < entities.size(); i++){
-			buffer.setColor(entities.get(i).color);									//Same but for boss
+			//Draws the proper circle with color for each player/boss
+			buffer.setColor(entities.get(i).color);
 			buffer.fillOval((int)entities.get(i).location.getX(),(int) entities.get(i).location.getY(), (int)entities.get(i).size.getX(), (int)entities.get(i).size.getY());
-		}
+		}		
 		for(int i = 0; i < entities.size(); i++){
+			//Draws the bullets for the players and bosses
+			//2 loops because player and boss have separate instances of bulletLists
+			//Super class doesn't have a bullet list because bullet inherits it
 			if(entities.get(i).getClass().equals(Player.class)){
 				for(Bullet b: ((Player)entities.get(i)).bullets){									
 					buffer.setColor(((Player)entities.get(i)).color);
@@ -58,6 +62,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Ob
 		g.drawImage(offscreen,0,0,this);								//Draws the buffered image onto the screen
 	}
 	public void collideCheck(){
+		//Checks only for player vs boss bullets and boss vs player bullets
 		for(int i = 0; i < entities.size(); i++){
 			for(int k = 0; k < entities.size(); k++){
 				if(entities.get(i).getClass().equals(Player.class)){
@@ -86,36 +91,40 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Ob
 		}
 	}
 	public boolean collide(Entity e, Entity e1){
-		//e is being collided with e1		
+		//BASICALLY: checks if the distance between 2 objects is less than the radius of both objects combined (are touching)
+		//e is being collided with e1	
 		if(distance(e,e1) < (e.size.getX()/2) + (e1.size.getX()/2)){
-			//System.out.println(e.name + " " + e.getCenter() + "\n" +e1.name + " " + e1.getCenter());
 			return true;
 		}
 		return false;
 	}
 	public double distance(Entity e, Entity e1){
-		double dist =  Math.sqrt(Math.pow((e.getCenter().getX() - e1.getCenter().getX()),2) + Math.pow((e.getCenter().getY() - e1.getCenter().getY()),2));
-		//System.out.println(dist);
+		//Does pythagoras theorem to find the distance between 2 points
+		double dist =  Math.sqrt(Math.pow((e.getCenter().getX() - e1.getCenter().getX()),2)
+				+ Math.pow((e.getCenter().getY() - e1.getCenter().getY()),2));
 		return dist;
 	}
 	public void update(Graphics g){
+		//Updates everything
 		for(int i = 0; i < entities.size(); i++){
 			if(entities.get(i).getClass().equals(Player.class)){
-				((Player) entities.get(i)).update(); //Smoother movement.
+				((Player) entities.get(i)).update(); //For smoother movement.
 			}
 			else if(entities.get(i).getClass().equals(Boss.class)){
 				((Boss)entities.get(i)).update();
 			}
 		}
+		//Checks for collisions and then redraws everything
 		collideCheck();
 		paint(g);
 	}
 	public void roundStart(){
+		//Removes everything
 		entities.clear();
+		//Inits our boss and player
 		entities.add(new Player());
 		entities.add(new Boss());
-		//		temp = new Player();											//Init player (bad)
-		//		boss = new Boss();												//Inits boss (bad)
+		//Starts our timer
 		timer.start();
 	}
 	public void roundEnd(){
@@ -127,23 +136,25 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Ob
 	public void removeObserver(Observer o){
 		ObserverList.remove(o);
 	}
-	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		//Makes sure the entities aren't out of bounds
 		for(int i = 0; i < entities.size(); i++){
 			if(!outOfBounds(entities.get(i))){
 				if(entities.get(i).getClass().equals(Player.class)){
 					((Player) entities.get(i)).move(); //Smoother movement.
 				}
 				else if(entities.get(i).getClass().equals(Boss.class)){
+					//Does some random shooty patterns for now
 					((Boss)entities.get(i)).randomMove();
 					((Boss)entities.get(i)).spiral(2);
 				}
 			}
 		}
+		//Redraws (repaint calls update)
 		repaint();
 	}
 	public static boolean outOfBounds(Entity e){
+		//Checks if the entity is within the play field
 		if(e.location.getX() < 0){
 			e.location = new Point2D.Double(e.location.getX()+1,e.location.getY());
 			return true;

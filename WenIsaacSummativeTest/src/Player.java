@@ -4,8 +4,9 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class Player extends Entity implements Observer{
-	private final int FAST = 5;
+	private final int FAST = 4;
 	private final int SLOW = 1;
+	private final Point2D BULLET_SIZE = new Point2D.Double(10,10);
 	private boolean controls[] = {false,false,false,false,false,false};
 	//FW,BW,LEFT,RIGHT,SHIFT,SPACE;
 	private int keyBinding[];
@@ -58,7 +59,7 @@ public class Player extends Entity implements Observer{
 	}
 	private void shoot(){
 	///	int deltaX = (speed * cos )
-		Bullet b = new Bullet(getCenter(), new Point2D.Double(10,10), Color.red, 10, 90);
+		Bullet b = new Bullet(new Point2D.Double(getCenter().getX()-(BULLET_SIZE.getX()/2),getCenter().getY()-(BULLET_SIZE.getY()/2)), BULLET_SIZE, Color.red, 10, 90);
 		bullets.add(b);
 	}
 	public void update(){

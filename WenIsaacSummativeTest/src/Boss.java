@@ -8,7 +8,7 @@ public class Boss extends Entity{
 	private int spiral;
 	ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 	public Boss(){
-		color = Color.blue;
+		color = Color.white;
 		name = "boss";
 		health = 10000;
 		location = new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, 0);
