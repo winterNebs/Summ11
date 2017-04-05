@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
@@ -30,8 +31,7 @@ public class Player extends Entity implements Observer{
 		keyBinding[5]=32;
 		//keyBinding[5]=67;
 	}
-	@Override
-	public void update(KeyEvent keyevent, boolean pressed) {
+	public void keyUpdate(KeyEvent keyevent, boolean pressed) {
 		// TODO Auto-generated method stub
 		for(int i = 0; i < keyBinding.length; i++){
 			if(keyevent.getKeyCode() == keyBinding[i]){
@@ -69,5 +69,10 @@ public class Player extends Entity implements Observer{
 				bullets.remove(bullets.get(i));
 			}
 		}
+	}
+	@Override
+	public void mouseUpdate(MouseEvent mouseevent, boolean clicked) {
+		// TODO Auto-generated method stub
+		
 	}
 }

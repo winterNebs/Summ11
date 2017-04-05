@@ -4,31 +4,40 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
 interface Observer{
 	//Receiver for notifications
-	public void update(KeyEvent keyevent, boolean pressed);
+	public void keyUpdate(KeyEvent keyevent, boolean pressed);
+	public void mouseUpdate(MouseEvent mouseevent, boolean clicked);
 }
 interface Observable{
 	//Sender for notifications
 	public void notifyObservers(KeyEvent keyevent, boolean pressed);
+	public void notifyObservers(MouseEvent mouseevent, boolean clicked);
 }
 /** TODO:
 	- Main Menu
-	- -Separate Gui- (too hard)
+	- -Separate gui- (too hard)
  **/
-public class MainClass extends Applet implements ActionListener, KeyListener, Observable{
+public class MainClass extends Applet implements ActionListener, KeyListener, MouseListener, MouseMotionListener, Observable{
 	Timer timer = new Timer(10, this);									//Declare timer and init
 	Image offscreen;													//Double buffer image **
 	Graphics buffer;													//Double buffer drawer **
-	private static ArrayList<Observer> ObserverList = new ArrayList<Observer>();	//Declare and init observer list
+	Image menuImage;
+	private static ArrayList<Observer> ObserverList = new ArrayList<Observer>();	//Declare and init Observer list
 	static Point2D PLAY_FIELD_SIZE;										//Supposed to be a constant, but can't actually set this until i set the size)
 	private ArrayList<Entity> entities = new ArrayList();				//Creates a list of all entities (players and bosses) for generalization purposes (co-op maybe)
+	private boolean isClicked = false;									//FIND A BETTER WAY
 	public void init(){		
 		this.addKeyListener(this);										//Adds a keylistener
+		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 		this.setSize(2500,1500);											//Set window size
 		PLAY_FIELD_SIZE  = new Point2D.Double(this.getWidth()/4*3, this.getHeight());	//Sets a "constant" (not really because things)
 		offscreen = createImage(this.getWidth(),this.getHeight());		//Initialized the buffer image
@@ -36,6 +45,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Ob
 		roundStart();													//Starts the game
 	}
 	public void paint(Graphics g){
+		MainMenu menu = new MainMenu(menuImage,buffer);
 		buffer.setColor(Color.black);									//Sets color of playfield to black
 		buffer.fillRect(0, 0, (int)PLAY_FIELD_SIZE.getX(), (int)PLAY_FIELD_SIZE.getY());	//Draws the playfeild
 		for(int i = 0; i < entities.size(); i++){
@@ -65,6 +75,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Ob
 			buffer.setFont(new Font("TimesRoman", Font.PLAIN, 300)); 
 			buffer.drawString("Paused", 500, 500);
 		}
+		buffer.drawImage(menu.draw(), 100,100,this);
 		g.drawImage(offscreen,0,0,this);								//Draws the buffered image onto the screen
 	}
 	public void collideCheck(){
@@ -195,18 +206,38 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Ob
 				resume();
 			}
 		}
-		// Notifies all observers that a key is pressed
+		// Notifies all Observers that a key is pressed
 		notifyObservers(e, true);
 	}
 	public void keyReleased(KeyEvent e) {
-		// Notifies all observers that a key is released
+		// Notifies all Observers that a key is released
 		notifyObservers(e, false);
 	}
-	public void keyTyped(KeyEvent arg0){ /*Junk method*/ }
 	public void notifyObservers(KeyEvent keyevent, boolean pressed) {
-		// Notifies all observers with keyevent and keystate
+		// Notifies all Observers with keyevent and keystate
 		for(Observer o: ObserverList){
-			o.update(keyevent, pressed);
+			o.keyUpdate(keyevent, pressed);
 		}
 	}
+	public void notifyObservers(MouseEvent mouseevent, boolean clicked) {
+		for(Observer o: ObserverList){
+			o.mouseUpdate(mouseevent, clicked);
+		}
+	}
+	public void mousePressed(MouseEvent e) {
+		isClicked = true;
+		notifyObservers(e,true);
+	}
+	public void mouseReleased(MouseEvent e) {
+		isClicked = false;
+		notifyObservers(e,false);
+	}
+	public void mouseMoved(MouseEvent e) {
+		notifyObservers(e,isClicked);
+	}
+	public void keyTyped(KeyEvent arg0){ /*Junk method*/ }
+	public void mouseDragged(MouseEvent e) { }
+	public void mouseClicked(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) {	}
 }
