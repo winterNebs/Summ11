@@ -22,8 +22,7 @@ interface Observable{
 	public void notifyObservers(MouseEvent mouseevent, boolean clicked);
 }
 /** TODO:
-	- Main Menu
-	- -Separate gui- (too hard)
+	- fix game
  **/
 public class MainClass extends Applet implements ActionListener, KeyListener, MouseListener, MouseMotionListener, Observable{
 	Timer timer = new Timer(10, this);									//Declare timer and init
@@ -34,6 +33,8 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 	static Point2D PLAY_FIELD_SIZE;										//Supposed to be a constant, but can't actually set this until i set the size)
 	private ArrayList<Entity> entities = new ArrayList();				//Creates a list of all entities (players and bosses) for generalization purposes (co-op maybe)
 	private boolean isClicked = false;									//FIND A BETTER WAY
+	MainMenu menu;
+	public static boolean isPlaying;
 	public void init(){		
 		this.addKeyListener(this);										//Adds a keylistener
 		this.addMouseListener(this);
@@ -42,10 +43,13 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 		PLAY_FIELD_SIZE  = new Point2D.Double(this.getWidth()/4*3, this.getHeight());	//Sets a "constant" (not really because things)
 		offscreen = createImage(this.getWidth(),this.getHeight());		//Initialized the buffer image
 		buffer = offscreen.getGraphics();								//Sets the buffer to draw on offscreen
+		menu = new MainMenu(menuImage,buffer,isPlaying);
+		timer.start();
 		roundStart();													//Starts the game
+		isPlaying = false;
+		
 	}
-	public void paint(Graphics g){
-		MainMenu menu = new MainMenu(menuImage,buffer);
+	public void paint(Graphics g){	
 		buffer.setColor(Color.black);									//Sets color of playfield to black
 		buffer.fillRect(0, 0, (int)PLAY_FIELD_SIZE.getX(), (int)PLAY_FIELD_SIZE.getY());	//Draws the playfeild
 		for(int i = 0; i < entities.size(); i++){
@@ -70,12 +74,13 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 				}
 			}
 		}
-		if(!timer.isRunning()){
+		if(!isPlaying){
+			menu.enabled = true;
 			buffer.setColor(Color.white);
 			buffer.setFont(new Font("TimesRoman", Font.PLAIN, 300)); 
-			buffer.drawString("Paused", 500, 500);
+			//buffer.drawString("Paused", 500, 500);
+			buffer.drawImage(menu.draw(), 0, 0,this);
 		}
-		buffer.drawImage(menu.draw(), 100,100,this);
 		g.drawImage(offscreen,0,0,this);								//Draws the buffered image onto the screen
 	}
 	public void collideCheck(){
@@ -123,16 +128,18 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 	}
 	public void update(Graphics g){
 		//Updates everything
-		for(int i = 0; i < entities.size(); i++){
-			if(entities.get(i).getClass().equals(Player.class)){
-				((Player) entities.get(i)).update(); //For smoother movement.
+		if(isPlaying){
+			for(int i = 0; i < entities.size(); i++){
+				if(entities.get(i).getClass().equals(Player.class)){
+					((Player) entities.get(i)).update(); //For smoother movement.
+				}
+				else if(entities.get(i).getClass().equals(Boss.class)){
+					((Boss)entities.get(i)).update();
+				}
 			}
-			else if(entities.get(i).getClass().equals(Boss.class)){
-				((Boss)entities.get(i)).update();
-			}
+			//Checks for collisions and then redraws everything
+			collideCheck();
 		}
-		//Checks for collisions and then redraws everything
-		collideCheck();
 		paint(g);
 	}
 	public void roundStart(){
@@ -142,14 +149,16 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 		entities.add(new Player());
 		entities.add(new Boss());
 		//Starts our timer
-		timer.start();
+		isPlaying = true;
+		menu.enabled = false;
 	}
 	public void resume(){
-		timer.start();
+		isPlaying = true;
+		menu.enabled = false;
 	}
 	public void pause(){
-		timer.stop();
-
+		isPlaying = false;
+		menu.enabled = true;
 		//paint(buffer);
 		repaint();
 	}
@@ -161,15 +170,17 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 	}
 	public void actionPerformed(ActionEvent e) {
 		//Makes sure the entities aren't out of bounds
-		for(int i = 0; i < entities.size(); i++){
-			if(!outOfBounds(entities.get(i))){
-				if(entities.get(i).getClass().equals(Player.class)){
-					((Player) entities.get(i)).move(); //Smoother movement.
-				}
-				else if(entities.get(i).getClass().equals(Boss.class)){
-					//Does some random shooty patterns for now
-					((Boss)entities.get(i)).randomMove();
-					((Boss)entities.get(i)).spiral(2);
+		if(isPlaying){
+			for(int i = 0; i < entities.size(); i++){
+				if(!outOfBounds(entities.get(i))){
+					if(entities.get(i).getClass().equals(Player.class)){
+						((Player) entities.get(i)).move(); //Smoother movement.
+					}
+					else if(entities.get(i).getClass().equals(Boss.class)){
+						//Does some random shooty patterns for now
+						((Boss)entities.get(i)).randomMove();
+						((Boss)entities.get(i)).spiral(2);
+					}
 				}
 			}
 		}
@@ -199,7 +210,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 	public void keyPressed(KeyEvent e) {
 		//Escape
 		if(e.getKeyCode() == 27){
-			if(timer.isRunning()){
+			if(isPlaying){
 				pause();
 			}
 			else{
@@ -233,7 +244,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 		notifyObservers(e,false);
 	}
 	public void mouseMoved(MouseEvent e) {
-		notifyObservers(e,isClicked);
+		notifyObservers(e, isClicked);
 	}
 	public void keyTyped(KeyEvent arg0){ /*Junk method*/ }
 	public void mouseDragged(MouseEvent e) { }

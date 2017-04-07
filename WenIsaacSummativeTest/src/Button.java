@@ -2,26 +2,28 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
 public class Button {
-	Image image;													//Double buffer image **
-	Graphics buffer;												//Double buffer drawer **
-	String name;
-	Point2D location;
-	//Point2D size;
-	String text;
-	Font font;
-	Color color;
+	private Image image;													//Double buffer image **
+	private Graphics buffer;												//Double buffer drawer **
+	public int number;
+	private Point2D location;
+	private String text;
+	private Font font;
+	private Color color;
+	public Rectangle bounds;
+	public boolean isClicked;
 	public Button(){
-		name = "test";
+		number = -1;
 		//font = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/15));
 	}
-	public Button(Image i, Graphics b,String t, Point2D l, Font f, Color c){
+	public Button(int n,Image i, Graphics b,String t, Point2D l, Font f, Color c){
+		number = n;
 		image = i;
 		buffer = b;
 		text = t;
 		location = l;
-		//size = s;
 		font = f;
 		color = c;
+		draw();
 	}
 	public Image draw(){
 		Rectangle rect = new Rectangle();
@@ -32,6 +34,7 @@ public class Button {
 		buffer.setColor(color);
 		drawCenteredString(buffer, text, rect, font);
 		buffer.drawRect(rect.x, rect.y, rect.width, rect.height);
+		bounds = new Rectangle(rect);
 		return image;
 	}
 	private Rectangle rectangleBounds(Point2D s, Point2D l){
@@ -53,4 +56,17 @@ public class Button {
 		// Draw the String
 		g.drawString(text, x, y);
 	}
+	public void hovered(boolean hovered, boolean clicked){
+		if(hovered){
+			color = Color.blue;
+			isClicked = clicked;
+			if(clicked){
+				color = Color.white;
+			}
+		}
+		else{
+			color = Color.red;
+		}
+	}
+	
 }
