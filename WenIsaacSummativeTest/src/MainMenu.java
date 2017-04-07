@@ -7,62 +7,43 @@ import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 /**
  TODO: 
- main menu passing shinanigans aaaaaa
+ - Nothing for now :)
  */
 public class MainMenu implements Observer{
-	private Image image;													//Double buffer image **
-	private Graphics buffer;												//Double buffer drawer **			
-	public Font dFont; 													//Default font
-	private ArrayList<Button> buttons = new ArrayList<Button>();
-	public boolean enabled = false;
+	private Image image;										//Image to draw on
+	private Graphics buffer;									//Drawer to draw on the image (not a buffer really, but i copy pasted)
+	public Font dFont; 											//Default font
+	private ArrayList<Button> buttons = new ArrayList<Button>();//Array of all our buttons on the menu
+	public boolean enabled = false;								//Boolean for (should the menu appear and work)
 	public MainMenu(Image i, Graphics b, boolean e){
-		MainClass.addObserver(this);
+		MainClass.addObserver(this);							//Adds itself as an observer
+		//Constructor jargon
 		image = i;
 		buffer = b;
 		enabled = e;
 		dFont = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/15));
-		//addButtons();
 	}
-	private void addButtons(){
-
-//		buttons.add(new Button(0,image, buffer,"Paused", 
-//				new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/10),
-//				dFont, Color.red));
-//		buttons.add(new Button(1,image, buffer,"Start", 
-//				new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/4),
-//				dFont, Color.red));
-	}
+	public MainMenu(){/**Gross default constructor*/}
 	public Image draw(){
+		//Draws all the buttons on the image, returns that image so the mainclass can draw it
 		for(Button b: buttons){
 			buffer.drawImage(b.draw(), 0, 0, null);
 		}
 		return image;
 	}
-	public void keyUpdate(KeyEvent keyevent, boolean pressed) {
-
-	}
 	public void mouseUpdate(MouseEvent mouseevent, boolean clicked) {
+		//Does stuff for the buttons
 		for(Button b: buttons){
 			b.hovered(b.bounds.contains(mouseevent.getPoint()), clicked);
 		}
-		//update();
 	}
-//	public void update(){
-//		if(enabled){
-//			for(Button b: buttons){
-//				if(b.isClicked){
-//					switch(b.number){
-//					case 0: ;break;
-//					case 1: MainClass.isPlaying = true; break;
-//					}
-//				}
-//			}
-//		}
-//	}
 	public ArrayList<Button> updater(){
+		//Returns list of buttons
 		return buttons;
 	}
 	public void addButton(int n, String t, Point2D l, Font f, Color c){
+		//Creates new buttons
 		buttons.add(new Button(n,image, buffer, t, l, f, c));
 	}
+	public void keyUpdate(KeyEvent keyevent, boolean pressed) {	/**Don't really need this*/}
 }

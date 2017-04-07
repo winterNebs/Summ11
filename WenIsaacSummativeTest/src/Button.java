@@ -2,7 +2,7 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
 public class Button {
-	private Image image;													//Double buffer image **
+	private Image image;				
 	private Graphics buffer;												//Double buffer drawer **
 	public int number;
 	private Point2D location;
@@ -13,7 +13,6 @@ public class Button {
 	public boolean isClicked;
 	public Button(){
 		number = -1;
-		//font = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/15));
 	}
 	public Button(int n,Image i, Graphics b,String t, Point2D l, Font f, Color c){
 		number = n;
@@ -30,7 +29,6 @@ public class Button {
 		FontMetrics metrics = buffer.getFontMetrics(font);
 		//Sets the size of the rectangle to the size of the text
 		rect.setBounds(rectangleBounds(new Point2D.Double(metrics.stringWidth(text), metrics.getHeight()), location));
-		//font = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/15));
 		buffer.setColor(Color.black);
 		buffer.fillRect(rect.x, rect.y, rect.width, rect.height);
 		buffer.setColor(color);

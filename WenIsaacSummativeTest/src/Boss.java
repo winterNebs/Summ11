@@ -16,7 +16,6 @@ public class Boss extends Entity{
 	}
 	public void randomMove(){
 		int Move = (int)(Math.random()*40)-20;
-		//System.out.println(Move);
 		//location = new Point2D((int)(location.getX() - (Move)), location.getY());
 		if(Move == 10){
 			ring(2);
@@ -33,7 +32,6 @@ public class Boss extends Entity{
 		shoot(s,spiral,new Point2D.Double(10,10));
 	}
 	private void shoot(int s, int a, Point2D size){
-		///	int deltaX = (speed * cos )
 		Bullet b = new Bullet(getCenter(), size, Color.red, s, a);
 		bullets.add(b);
 	}
@@ -47,8 +45,6 @@ public class Boss extends Entity{
 	}
 	public void hit(){
 		health -= 1;
-		//color = new Color(color.getRed(),color.getGreen()+1,color.getBlue());
-		//System.out.println(health);
 	}
 }
 

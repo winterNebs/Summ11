@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 public class Bullet extends Entity {
 	private int speed;
 	int angle;
@@ -24,5 +23,4 @@ public class Bullet extends Entity {
 	public void move(){
 		location = new Point2D.Double((location.getX() - (speed * Math.cos(Math.toRadians(angle)))), (location.getY() - (speed * Math.sin(Math.toRadians(angle)))));
 	}
-	//inherits toString
 }

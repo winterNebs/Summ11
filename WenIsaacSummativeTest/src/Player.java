@@ -29,16 +29,13 @@ public class Player extends Entity implements Observer{
 		keyBinding[3]=39;
 		keyBinding[4]=16;
 		keyBinding[5]=32;
-		//keyBinding[5]=67;
 	}
 	public void keyUpdate(KeyEvent keyevent, boolean pressed) {
-		// TODO Auto-generated method stub
 		for(int i = 0; i < keyBinding.length; i++){
 			if(keyevent.getKeyCode() == keyBinding[i]){
 				controls[i] = pressed;
 			}
 		}
-		//move();
 	}
 	public void move(){
 		for(int i = 0; i < controls.length; i++){
@@ -49,7 +46,7 @@ public class Player extends Entity implements Observer{
 				case 2: location = new Point2D.Double(location.getX()-speed,location.getY()); /*System.out.println("a");*/ break;
 				case 3: location = new Point2D.Double(location.getX()+speed,location.getY()); /*System.out.println("d");*/ break;
 				case 4: speed = SLOW; break;
-				case 5: shoot(); /*System.out.println("space");*/ break;
+				case 5: shoot(); break;
 				}
 			}
 		}	
@@ -58,7 +55,6 @@ public class Player extends Entity implements Observer{
 		}
 	}
 	private void shoot(){
-	///	int deltaX = (speed * cos )
 		Bullet b = new Bullet(new Point2D.Double(getCenter().getX()-(BULLET_SIZE.getX()/2),getCenter().getY()-(BULLET_SIZE.getY()/2)), BULLET_SIZE, Color.red, 10, 90);
 		bullets.add(b);
 	}
@@ -70,9 +66,5 @@ public class Player extends Entity implements Observer{
 			}
 		}
 	}
-	@Override
-	public void mouseUpdate(MouseEvent mouseevent, boolean clicked) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseUpdate(MouseEvent mouseevent, boolean clicked) {	}
 }
