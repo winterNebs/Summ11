@@ -39,7 +39,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 		this.addKeyListener(this);										//Adds a keylistener
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		this.setSize(2500,1500);											//Set window size
+		this.setSize(2500,1500);										//Set window size
 		PLAY_FIELD_SIZE  = new Point2D.Double(this.getWidth()/4*3, this.getHeight());	//Sets a "constant" (not really because things)
 		offscreen = createImage(this.getWidth(),this.getHeight());		//Initialized the buffer image
 		buffer = offscreen.getGraphics();								//Sets the buffer to draw on offscreen
@@ -47,7 +47,18 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 		timer.start();
 		roundStart();													//Starts the game
 		isPlaying = false;
-		
+		menu.addButton(0, "new game", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/10), menu.dFont,Color.red);
+		menu.addButton(1, "resume", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/4), menu.dFont, Color.red);
+	}
+	public void menuUpdate(){
+		for(Button b: menu.updater()){
+			if(b.isClicked){
+				switch(b.number){
+				case 0: roundStart(); System.out.println("rnd strt"); break;
+				case 1: isPlaying = true; break;
+				}
+			}
+		}
 	}
 	public void paint(Graphics g){	
 		buffer.setColor(Color.black);									//Sets color of playfield to black
@@ -75,6 +86,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 			}
 		}
 		if(!isPlaying){
+			menuUpdate();
 			menu.enabled = true;
 			buffer.setColor(Color.white);
 			buffer.setFont(new Font("TimesRoman", Font.PLAIN, 300)); 

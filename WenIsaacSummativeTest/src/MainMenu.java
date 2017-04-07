@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class MainMenu implements Observer{
 	private Image image;													//Double buffer image **
 	private Graphics buffer;												//Double buffer drawer **			
-	private Font dFont; 													//Default font
+	public Font dFont; 													//Default font
 	private ArrayList<Button> buttons = new ArrayList<Button>();
 	public boolean enabled = false;
 	public MainMenu(Image i, Graphics b, boolean e){
@@ -20,16 +20,17 @@ public class MainMenu implements Observer{
 		image = i;
 		buffer = b;
 		enabled = e;
-		addButtons();
+		dFont = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/15));
+		//addButtons();
 	}
 	private void addButtons(){
-		dFont = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/15));
-		buttons.add(new Button(0,image, buffer,"Paused", 
-				new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/10),
-				dFont, Color.red));
-		buttons.add(new Button(1,image, buffer,"Start", 
-				new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/4),
-				dFont, Color.red));
+
+//		buttons.add(new Button(0,image, buffer,"Paused", 
+//				new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/10),
+//				dFont, Color.red));
+//		buttons.add(new Button(1,image, buffer,"Start", 
+//				new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/4),
+//				dFont, Color.red));
 	}
 	public Image draw(){
 		for(Button b: buttons){
@@ -44,18 +45,24 @@ public class MainMenu implements Observer{
 		for(Button b: buttons){
 			b.hovered(b.bounds.contains(mouseevent.getPoint()), clicked);
 		}
-		update();
+		//update();
 	}
-	public void update(){
-		if(enabled){
-			for(Button b: buttons){
-				if(b.isClicked){
-					switch(b.number){
-					case 0: ;break;
-					case 1: MainClass.isPlaying = true; break;
-					}
-				}
-			}
-		}
+//	public void update(){
+//		if(enabled){
+//			for(Button b: buttons){
+//				if(b.isClicked){
+//					switch(b.number){
+//					case 0: ;break;
+//					case 1: MainClass.isPlaying = true; break;
+//					}
+//				}
+//			}
+//		}
+//	}
+	public ArrayList<Button> updater(){
+		return buttons;
+	}
+	public void addButton(int n, String t, Point2D l, Font f, Color c){
+		buttons.add(new Button(n,image, buffer, t, l, f, c));
 	}
 }

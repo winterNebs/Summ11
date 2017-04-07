@@ -31,6 +31,8 @@ public class Button {
 		//Sets the size of the rectangle to the size of the text
 		rect.setBounds(rectangleBounds(new Point2D.Double(metrics.stringWidth(text), metrics.getHeight()), location));
 		//font = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/15));
+		buffer.setColor(Color.black);
+		buffer.fillRect(rect.x, rect.y, rect.width, rect.height);
 		buffer.setColor(color);
 		drawCenteredString(buffer, text, rect, font);
 		buffer.drawRect(rect.x, rect.y, rect.width, rect.height);
