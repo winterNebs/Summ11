@@ -66,5 +66,12 @@ public class Player extends Entity implements Observer{
 			}
 		}
 	}
+	public Image bulletDraw(){
+		for(Bullet b: bullets){
+			buffer.drawImage(b.draw(image, buffer), 0, 0, null);
+		}
+		return image;
+
+	}
 	public void mouseUpdate(MouseEvent mouseevent, boolean clicked) {	}
 }

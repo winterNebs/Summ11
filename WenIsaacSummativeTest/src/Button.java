@@ -1,15 +1,8 @@
 /** what am i doing */
 import java.awt.*;
 import java.awt.geom.Point2D;
-public class Button {
-	private Image image;				
-	private Graphics buffer;												//Double buffer drawer **
+public class Button extends Text{											
 	public int number;
-	private Point2D location;
-	private String text;
-	private Font font;
-	private Color color;
-	public Rectangle bounds;
 	public boolean isClicked;
 	public Button(){
 		number = -1;
@@ -37,30 +30,11 @@ public class Button {
 		bounds = new Rectangle(rect);
 		return image;
 	}
-	private Rectangle rectangleBounds(Point2D s, Point2D l){
-		Rectangle r = new Rectangle();
-		r.setBounds((int)(l.getX()-(s.getX()/2)), (int)(l.getY()-(s.getY()/2)),(int)(s.getX()), (int)(s.getY()));
-		return r;
-	}
-	private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
-		/**Draws text centered*/
-		//AAAAAAAAAA finally fixed 
-		// Get the FontMetrics
-		FontMetrics metrics = g.getFontMetrics(font);
-		// Determine the X coordinate for the text
-		int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
-		// Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
-		int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
-		// Set the font
-		g.setFont(font);
-		// Draw the String
-		g.drawString(text, x, y);
-	}
 	public void hovered(boolean hovered, boolean clicked){
 		if(hovered){
 			color = Color.blue;
 			isClicked = clicked;
-			if(clicked){
+			if(isClicked){
 				color = Color.white;
 			}
 		}

@@ -22,7 +22,7 @@ interface Observable{
 	public void notifyObservers(MouseEvent mouseevent, boolean clicked);
 }
 /** TODO:
-	- add stuff
+	-% health stuff for boss
  **/
 public class MainClass extends Applet implements ActionListener, KeyListener, MouseListener, MouseMotionListener, Observable{
 	Timer timer = new Timer(10, this);									//Declare timer and init
@@ -32,11 +32,20 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 	private static ArrayList<Observer> ObserverList = new ArrayList<Observer>();	//Declare and init Observer list
 	static Point2D PLAY_FIELD_SIZE;										//Supposed to be a constant, but can't actually set this until i set the size
 	private ArrayList<Entity> entities = new ArrayList();				//Creates a list of all entities (players and bosses) for generalization purposes (co-op maybe)
-	private boolean isClicked = false;									//A little janky, but basically when the mouse is pressed down
+	//private boolean isClicked = false;									//A little janky, but basically when the mouse is pressed down
 	MainMenu menu;														//Declaring a new menu 
+	MainMenu end;
+	MainMenu instructions;
 	public static boolean isPlaying;									//Also janky, but when the game should be running
+	Image bossState1;
+	Image bossState2;
+	Image bossState3;
+	private ArrayList<MainMenu> menus = new ArrayList<MainMenu>();
 	public void init(){		
 		//Adding listeners
+		bossState1 = getImage(getDocumentBase(),"Boss.png");
+		bossState2 = getImage(getDocumentBase(),"Boss1.png");
+		bossState3 = getImage(getDocumentBase(),"Boss2.png");
 		this.addKeyListener(this);									
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -44,21 +53,43 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 		PLAY_FIELD_SIZE  = new Point2D.Double(this.getWidth()/4*3, this.getHeight());	//Sets a "constant" (not really because things)
 		offscreen = createImage(this.getWidth(),this.getHeight());		//Initialized the buffer image
 		buffer = offscreen.getGraphics();								//Sets the buffer to draw on offscreen
-		menu = new MainMenu(menuImage,buffer,isPlaying);				//Initializing the menu
+		menus.add(menu = new MainMenu(0, menuImage,buffer,!isPlaying));				//Initializing the menu
+		menus.add(end = new MainMenu(-1, menuImage,buffer,isPlaying));					//Initializing the end game
+		menus.add(instructions = new MainMenu(1,menuImage,buffer,false));
 		timer.start();													//Starts the timer
 		roundStart();													//Starts the game
 		pause();														//Pauses the game
-		/**Adds 2 buttons*/
-		menu.addButton(0, "new game", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/10), menu.dFont,Color.red);
-		menu.addButton(1, "resume", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/4), menu.dFont, Color.red);
+		/**Adds gui stuff*/
+		menu.addText("Main Menu",  new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/8), menu.dFont, Color.white);
+		menu.addButton(0, "New Game", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/4), menu.dFont,Color.red);
+		menu.addButton(1, "Resume", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()*3/8), menu.dFont, Color.red);
+		menu.addButton(2, "Instructions", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/2), menu.dFont, Color.red);
+		Font intstructionFont = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/25));
+		instructions.addText("You are the red dot, avoid getting hit. Kill the boss to win", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/8), intstructionFont, Color.white);
+		instructions.addText("Arrow keys to move, space bar to shoot,", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/4), intstructionFont, Color.white);
+		instructions.addText("shift for more percise movement, escape to pause.", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()*3/8), intstructionFont, Color.white);
+		instructions.addButton(0, "Back", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/2), menu.dFont, Color.red);
 	}
 	public void menuUpdate(){
-		//Updates the button clicks
-		for(Button b: menu.updater()){
-			if(b.isClicked){
-				switch(b.number){
-				case 0: roundStart(); System.out.println("rnd strt"); break;
-				case 1: isPlaying = true; break;
+		for(MainMenu m: menus){
+			if(m.enabled){
+				for(Button b: m.updater()){
+					if(b.isClicked){
+						switch(m.number){
+						case 0:
+							switch(b.number){
+							case 0: roundStart();break;
+							case 1: resume(); break;
+							case 2: menu.enabled = false; instructions.enabled = true;break;
+							}
+							break;
+						case 1:
+							switch(b.number){
+							case 0: instructions.enabled = false; menu.enabled = true;break;
+							}
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -68,10 +99,11 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 		//Draws everything to the buffer, then draws the buffer on screen
 		buffer.setColor(Color.black);								//Sets color of playfield to black
 		buffer.fillRect(0, 0, (int)PLAY_FIELD_SIZE.getX(), (int)PLAY_FIELD_SIZE.getY());	//Draws the playfeild
+		buffer.setColor(Color.white);
+		buffer.fillRect((int)PLAY_FIELD_SIZE.getX(), 0,  this.getWidth(), (int)PLAY_FIELD_SIZE.getY());
 		for(int i = 0; i < entities.size(); i++){
 			//Draws the proper circle with color for each player/boss
-			buffer.setColor(entities.get(i).color);
-			buffer.fillOval((int)entities.get(i).location.getX(),(int) entities.get(i).location.getY(), (int)entities.get(i).size.getX(), (int)entities.get(i).size.getY());
+			buffer.drawImage(entities.get(i).draw(offscreen, buffer), 0, 0, this);
 		}		
 		for(int i = 0; i < entities.size(); i++){
 			//Draws the bullets for the players and bosses
@@ -84,19 +116,25 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 				}
 			}
 			else if(entities.get(i).getClass().equals(Boss.class)){
+				buffer.setFont(new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/25)));
+				buffer.setColor(Color.black);
+				/**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***/
+				buffer.drawString("Boss health: " + ((Boss)entities.get(i)).health, (int)PLAY_FIELD_SIZE.getX(), (int)PLAY_FIELD_SIZE.getY()/20);
+				/**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***/
+				buffer.drawImage(((Boss)entities.get(i)).currentState,
+						(int)((Boss)entities.get(i)).location.getX(),(int)((Boss)entities.get(i)).location.getY(),
+						(int)((Boss)entities.get(i)).size.getX(),(int)((Boss)entities.get(i)).size.getY(),this);
 				for(Bullet b: ((Boss)entities.get(i)).bullets){									
 					buffer.setColor(((Boss)entities.get(i)).color);
 					buffer.fillOval((int)b.location.getX(), (int)b.location.getY(), (int)b.size.getX(), (int)b.size.getY());
 				}
 			}
 		}
-		if(!isPlaying){
-			//Draws the pause menu
-			menuUpdate();
-			menu.enabled = true;
-			buffer.setColor(Color.white);
-			buffer.drawImage(menu.draw(), 0, 0,this);
-		}
+		for(MainMenu m: menus){
+			if(m.enabled){
+				m.draw();
+			}
+		}	
 		g.drawImage(offscreen,0,0,this);							//Draws the buffered image onto the screen
 	}
 	public void collideCheck(){
@@ -111,7 +149,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 								((Boss)entities.get(k)).hit();
 								((Player)entities.get(i)).bullets.remove(((Player)entities.get(i)).bullets.get(j));
 							}
-						}
+						}	
 					}
 				}
 				else if(entities.get(i).getClass().equals(Boss.class)){
@@ -119,8 +157,9 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 						for(int j = ((Boss)entities.get(i)).bullets.size()-1; j >= 0; j--){
 							((Boss)entities.get(i)).bullets.get(j).move();
 							if(collide(((Boss)entities.get(i)).bullets.get(j),((Player)entities.get(k)))){
-								roundStart();
 								((Boss)entities.get(i)).bullets.remove(((Boss)entities.get(i)).bullets.get(j));
+								roundStart();
+								pause();								
 							}
 						}
 					}
@@ -164,7 +203,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 		entities.clear();
 		//Inits our boss and player
 		entities.add(new Player());
-		entities.add(new Boss());
+		entities.add(new Boss(bossState1,bossState2,bossState3));
 		resume();
 	}
 	public void resume(){
@@ -193,7 +232,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 					else if(entities.get(i).getClass().equals(Boss.class)){
 						//Random boss stuff idk for now
 						((Boss)entities.get(i)).randomMove();
-						((Boss)entities.get(i)).spiral(2);
+						//((Boss)entities.get(i)).spiral(2);
 					}
 				}
 			}
@@ -242,6 +281,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 	public void notifyObservers(KeyEvent keyevent, boolean pressed) {
 		//Notifies all Observers with keyevent and keystate
 		for(Observer o: ObserverList){
+
 			o.keyUpdate(keyevent, pressed);
 		}
 	}
@@ -252,15 +292,14 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 		}
 	}
 	public void mousePressed(MouseEvent e) {
-		isClicked = true;
 		notifyObservers(e,true);
+		menuUpdate();
 	}
 	public void mouseReleased(MouseEvent e) {
-		isClicked = false;
 		notifyObservers(e,false);
 	}
 	public void mouseMoved(MouseEvent e) {
-		notifyObservers(e, isClicked);
+		notifyObservers(e, false);
 	}
 	/**Junk methods that come with the listeners*/
 	public void keyTyped(KeyEvent arg0){}
