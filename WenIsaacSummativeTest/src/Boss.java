@@ -2,12 +2,15 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.geom.Point2D;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-//TODO Line shooty 
+
 public class Boss extends Entity{
 	private final int slow = 5;
 	public int health;
+	private int maxHealth;
 	private int spiral;
 	private int speed = 10;
 	private int straightShotBullets =  0;
@@ -21,6 +24,7 @@ public class Boss extends Entity{
 		color = Color.white;
 		name = "boss";
 		health = 10000;
+		maxHealth = 10000;
 		location = new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, 0);
 		size = new Point2D.Double(200,200);
 		states[0] = a;
@@ -28,19 +32,103 @@ public class Boss extends Entity{
 		states[2] = c;
 		currentState = states[0];
 	}
-	public void randomMove(){
+	public void fight(){
 		if(alive()){
-			spiral(2);
-			int Move = (int)(Math.random()*40)-20;
-			int angle = (int)(Math.random()*360);
-			move(angle, speed);
-			if(Move == 10){
-				ring(2);
+			int angle = (int)(Math.random()*360);;
+			if(location.getY() > (size.getY())){
+				angle = (int)(Math.random()*360);
 			}
-			line(4,20,3,new Point2D.Double(5,5));
-			horizontal();
-			straightShot(5,(int)(Math.random()*180)-180);
+			else if(location.getY() > (MainClass.PLAY_FIELD_SIZE.getY()/2)){
+				angle = (int)(Math.random()*180);
+			}
+			if(hpLeft() >= 85){
+				speed = 5;
+				int rnd = (int)(Math.random()*100);
+				if(rnd == 10){
+					ring(2,10);
+				}
+			}
+			else if(hpLeft() >= 75){
+				speed = 7;
+				int rnd = (int)(Math.random()*100);
+				switch(rnd){
+				case 10: ring(2,10);break;
+				case 20: ring(1,15);break;
+				}
+			}
+			else if(hpLeft() >= 70){
+				speed = 10;
+				int rnd = (int)(Math.random()*100);
+				switch(rnd){
+				case 10: ring(2,10);break;
+				case 20: ring(1,15);break;
+				}
+				spiral(2,10,0);
+			}
+			else if(hpLeft() >= 60){
+				speed = 10;
+				int rnd = (int)(Math.random()*100);
+				switch(rnd){
+				case 10: ring(2,10);break;
+				case 20: ring(1,15);break;
+				case 30: ring(2,20);break;
+				}
+				spiral(2,10,0);
+			}
+			else if(hpLeft() >= 40){
+				speed = 12;
+				int rnd = (int)(Math.random()*100);
+				switch(rnd){
+				case 10: ring(2,20);break;
+				case 20: ring(2,20);break;
+				case 30: ring(1,20);break;
+				case 40: ring(2,10);break;
+				}
+				spiral(2,10,0);
+				straightShot(5,(int)(Math.random()*180)-180);
+				straightShot(5,(int)(Math.random()*180)-180);
+			}
+			else if(hpLeft() >= 5){
+				speed = 15;
+				int rnd = (int)(Math.random()*100);
+				switch(rnd){
+				case 10: ring(2,20);break;
+				case 20: ring(1,20);break;
+				case 30: ring(1,25);break;
+				}
+				spiral(2,20,0);
+				spiral(2,20,180);
+				straightShot(5,(int)(Math.random()*180)-180);
+				line(4,20,3,new Point2D.Double(5,5));
+			}
+			else{
+				speed = 25;
+				int rnd = (int)(Math.random()*100);
+				switch(rnd){
+				case 10: ring(2,20);break;
+				case 20: ring(1,20);break;
+				case 30: ring(1,30);break;
+				case 40: ring(3,10);break;
+				case 50: ring(3,10);break;
+				case 60: ring(4,5);break;
+				}
+				spiral(2,20,0);
+				spiral(2,20,120);
+				spiral(2,20,240);
+				straightShot(5,(int)(Math.random()*180)-180);
+				straightShot(3,(int)(Math.random()*180)-180);
+				line(4,20,3,new Point2D.Double(5,5));
+			}
+			move(angle, speed);
 		}
+	}
+	private float hpLeft(){
+		return ((float)health)/((float)maxHealth)*100;
+	}
+	public String hpFormat(){
+		DecimalFormat df = new DecimalFormat("#.##");
+		df.setRoundingMode(RoundingMode.CEILING);
+		return df.format(hpLeft()) + "%";
 	}
 	private void straightShot(int s,int angle){
 		if(straightShotBullets <= 0){
@@ -54,10 +142,10 @@ public class Boss extends Entity{
 		location = new Point2D.Double((location.getX() - (speed * Math.cos(Math.toRadians(angle)))),
 				(location.getY() - (speed * Math.sin(Math.toRadians(angle)))));
 	}
-	private void ring(int s){
+	private void ring(int s, int size){
 		int j = (int) (Math.random()*10);
 		for(int i = j; i < 360; i+=10){
-			shoot(s,i,new Point2D.Double(20,20));
+			shoot(s,i,new Point2D.Double(size,size));
 		}
 	}
 	public void horizontal(){
@@ -85,10 +173,11 @@ public class Boss extends Entity{
 				lineLocation.clear();
 			}
 		}
+		horizontal();
 	}
-	public void spiral(int s){
-		spiral +=4;
-		shoot(s,spiral,new Point2D.Double(10,10));
+	public void spiral(int s, int size, int offset){
+		spiral +=4 + offset;
+		shoot(s,spiral,new Point2D.Double(size,size));
 	}
 	private void shoot(int s, int a, Point2D size){
 		Bullet b = new Bullet(getCenter(), size, Color.red, s, a);
@@ -130,8 +219,6 @@ public class Boss extends Entity{
 			return true;
 		}
 		return false;
-	}
-	public static void potato(){
 	}
 }
 

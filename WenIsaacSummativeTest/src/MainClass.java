@@ -22,7 +22,9 @@ interface Observable{
 	public void notifyObservers(MouseEvent mouseevent, boolean clicked);
 }
 /** TODO:
-	-% health stuff for boss
+	-Tweak gameplay
+	-Shielding mechanic??
+	https://docs.oracle.com/javase/tutorial/essential/concurrency/memconsist.html
  **/
 public class MainClass extends Applet implements ActionListener, KeyListener, MouseListener, MouseMotionListener, Observable{
 	Timer timer = new Timer(10, this);									//Declare timer and init
@@ -110,6 +112,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 			//2 loops because player and boss have separate instances of bulletLists
 			//Super class doesn't have a bullet list because bullet inherits it
 			if(entities.get(i).getClass().equals(Player.class)){
+				((Player)entities.get(i)).shieldDraw();
 				for(Bullet b: ((Player)entities.get(i)).bullets){									
 					buffer.setColor(((Player)entities.get(i)).color);
 					buffer.fillOval((int)b.location.getX(), (int)b.location.getY(), (int)b.size.getX(), (int)b.size.getY());
@@ -119,7 +122,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 				buffer.setFont(new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/25)));
 				buffer.setColor(Color.black);
 				/**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***/
-				buffer.drawString("Boss health: " + ((Boss)entities.get(i)).health, (int)PLAY_FIELD_SIZE.getX(), (int)PLAY_FIELD_SIZE.getY()/20);
+				buffer.drawString("Boss health: " + ((Boss)entities.get(i)).hpFormat(), (int)PLAY_FIELD_SIZE.getX(), (int)PLAY_FIELD_SIZE.getY()/20);
 				/**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***/
 				buffer.drawImage(((Boss)entities.get(i)).currentState,
 						(int)((Boss)entities.get(i)).location.getX(),(int)((Boss)entities.get(i)).location.getY(),
@@ -156,6 +159,12 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 					if(entities.get(k).getClass().equals(Player.class)){
 						for(int j = ((Boss)entities.get(i)).bullets.size()-1; j >= 0; j--){
 							((Boss)entities.get(i)).bullets.get(j).move();
+							if(((Player)entities.get(k)).shield.enabled){
+//								if(collide(((Boss)entities.get(i)).bullets.get(j),((Player)entities.get(k)).shield)){
+//									((Boss)entities.get(i)).bullets.remove(((Boss)entities.get(i)).bullets.get(j));
+//									((Player)entities.get(k)).shield.hit();
+//								}
+							}
 							if(collide(((Boss)entities.get(i)).bullets.get(j),((Player)entities.get(k)))){
 								((Boss)entities.get(i)).bullets.remove(((Boss)entities.get(i)).bullets.get(j));
 								roundStart();
@@ -231,7 +240,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 					}
 					else if(entities.get(i).getClass().equals(Boss.class)){
 						//Random boss stuff idk for now
-						((Boss)entities.get(i)).randomMove();
+						((Boss)entities.get(i)).fight();
 						//((Boss)entities.get(i)).spiral(2);
 					}
 				}

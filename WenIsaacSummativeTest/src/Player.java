@@ -8,13 +8,14 @@ public class Player extends Entity implements Observer{
 	private final int FAST = 4;
 	private final int SLOW = 1;
 	private final Point2D BULLET_SIZE = new Point2D.Double(10,10);
-	private boolean controls[] = {false,false,false,false,false,false};
+	private boolean controls[] = {false,false,false,false,false,false,false};
 	//FW,BW,LEFT,RIGHT,SHIFT,SPACE;
 	private int keyBinding[];
 	private int speed;
 	ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+	Shield shield;
 	//{87,83,65,68,16,32} = W S A D SHIFT SPACE
-	//{38,40,37,38,16,32} = UP DOWN LEFT RIGHT SHIFT SPACE
+	//{38,40,37,38,16,32,17} = UP DOWN LEFT RIGHT SHIFT SPACE CONTROL
 	public Player(){
 		name = "player";
 		speed = FAST;
@@ -22,13 +23,15 @@ public class Player extends Entity implements Observer{
 		size = new Point2D.Double(15,15);
 		color = Color.red;
 		MainClass.addObserver(this);
-		keyBinding = new int[6];
+		keyBinding = new int[controls.length];
 		keyBinding[0]=38;
 		keyBinding[1]=40;
 		keyBinding[2]=37;
 		keyBinding[3]=39;
 		keyBinding[4]=16;
 		keyBinding[5]=32;
+		keyBinding[6]=17;
+		shield = new Shield(this,20,200);
 	}
 	public void keyUpdate(KeyEvent keyevent, boolean pressed) {
 		for(int i = 0; i < keyBinding.length; i++){
@@ -41,16 +44,20 @@ public class Player extends Entity implements Observer{
 		for(int i = 0; i < controls.length; i++){
 			if(controls[i]){
 				switch(i){
-				case 0: location = new Point2D.Double(location.getX(),location.getY()-speed); /*System.out.println("w");*/ break;
-				case 1: location = new Point2D.Double(location.getX(),location.getY()+speed); /*System.out.println("s");*/ break;
-				case 2: location = new Point2D.Double(location.getX()-speed,location.getY()); /*System.out.println("a");*/ break;
-				case 3: location = new Point2D.Double(location.getX()+speed,location.getY()); /*System.out.println("d");*/ break;
-				case 4: speed = SLOW; break;
+				case 0: location = new Point2D.Double(location.getX(),location.getY()-speed); System.out.println("w"); break;
+				case 1: location = new Point2D.Double(location.getX(),location.getY()+speed); System.out.println("s"); break;
+				case 2: location = new Point2D.Double(location.getX()-speed,location.getY()); System.out.println("a"); break;
+				case 3: location = new Point2D.Double(location.getX()+speed,location.getY()); System.out.println("d"); break;
+				case 4: shield.enabled = true; break;
 				case 5: shoot(); break;
+				case 6: speed = SLOW; break;
 				}
 			}
 		}	
-		if(!controls[4]){
+//		if(!controls[4]){
+//			shield.enabled = false;
+//		}
+		if(!controls[6]){
 			speed = FAST;
 		}
 	}
@@ -66,12 +73,20 @@ public class Player extends Entity implements Observer{
 			}
 		}
 	}
-	public Image bulletDraw(){
-		for(Bullet b: bullets){
-			buffer.drawImage(b.draw(image, buffer), 0, 0, null);
+	public Image shieldDraw(){ 
+		if(shield.enabled){
+			buffer.drawImage(shield.draw(image,buffer),0,0,null);
 		}
 		return image;
-
 	}
+/**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***/
+//						Not efficient
+//	public Image bulletDraw(){
+//		for(Bullet b: bullets){
+//			buffer.drawImage(b.draw(image, buffer), 0, 0, null);
+//		}
+//		return image;
+//
+//	}
 	public void mouseUpdate(MouseEvent mouseevent, boolean clicked) {	}
 }
