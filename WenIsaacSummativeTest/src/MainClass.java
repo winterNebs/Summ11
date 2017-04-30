@@ -162,7 +162,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 							((Boss)entities.get(i)).bullets.get(j).move();
 							if(((Player)entities.get(k)).shield.enabled){
 								if(collide(((Boss)entities.get(i)).bullets.get(j),((Player)entities.get(k)).shield)){
-									//((Boss)entities.get(i)).bullets.remove(((Boss)entities.get(i)).bullets.get(j));
+									((Boss)entities.get(i)).bullets.remove(((Boss)entities.get(i)).bullets.get(j));
 									((Player)entities.get(k)).shield.hit();
 								}
 							}
