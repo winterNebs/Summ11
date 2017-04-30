@@ -100,6 +100,7 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 	public void paint(Graphics g){
 		//Does all the graphics stuff
 		//Draws everything to the buffer, then draws the buffer on screen
+		buffer.setFont(new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/30)));
 		buffer.setColor(Color.black);								//Sets color of playfield to black
 		buffer.fillRect(0, 0, (int)PLAY_FIELD_SIZE.getX(), (int)PLAY_FIELD_SIZE.getY());	//Draws the playfeild
 		buffer.setColor(Color.white);
@@ -114,13 +115,14 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 			//Super class doesn't have a bullet list because bullet inherits it
 			if(entities.get(i).getClass().equals(Player.class)){
 				((Player)entities.get(i)).shieldDraw();
-				for(Bullet b: ((Player)entities.get(i)).bullets){									
+				buffer.setColor(Color.black);
+				buffer.drawString(((Player)entities.get(i)).shield.coolDownFormat(), (int)PLAY_FIELD_SIZE.getX(), (int)PLAY_FIELD_SIZE.getY()/10);
+								for(Bullet b: ((Player)entities.get(i)).bullets){									
 					buffer.setColor(((Player)entities.get(i)).color);
 					buffer.fillOval((int)b.location.getX(), (int)b.location.getY(), (int)b.size.getX(), (int)b.size.getY());
 				}
 			}
 			else if(entities.get(i).getClass().equals(Boss.class)){
-				buffer.setFont(new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/25)));
 				buffer.setColor(Color.black);
 				/**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***//**//***/
 				buffer.drawString("Boss health: " + ((Boss)entities.get(i)).hpFormat(), (int)PLAY_FIELD_SIZE.getX(), (int)PLAY_FIELD_SIZE.getY()/20);

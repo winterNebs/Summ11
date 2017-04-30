@@ -42,8 +42,13 @@ public class Shield extends Entity{
 		update();
 	}
 	public String coolDownFormat(){
-		DecimalFormat df = new DecimalFormat("#.##");
-		df.setRoundingMode(RoundingMode.CEILING);
-		return df.format(coolDown/1000) + "%";
+		if(coolDown > 0){
+			DecimalFormat df = new DecimalFormat("#.##");
+			df.setRoundingMode(RoundingMode.CEILING);
+			return "Shield Cooldown: " + df.format(coolDown/1000) + " s";
+		}
+		else{
+			return "Shield Ready";
+		}
 	}
 }
