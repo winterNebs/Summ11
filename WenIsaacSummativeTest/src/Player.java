@@ -24,13 +24,17 @@ public class Player extends Entity implements Observer{
 		color = Color.red;
 		MainClass.addObserver(this);
 		keyBinding = new int[controls.length];
-		keyBinding[0]=38;
-		keyBinding[1]=40;
-		keyBinding[2]=37;
-		keyBinding[3]=39;
-		keyBinding[4]=16;
-		keyBinding[5]=32;
-		keyBinding[6]=17;
+		//rebind everything
+		keyBinding[0]=KeyEvent.VK_W;
+		keyBinding[1]=KeyEvent.VK_S;
+		keyBinding[2]=KeyEvent.VK_A;
+		keyBinding[3]=KeyEvent.VK_D;
+		keyBinding[4]=KeyEvent.VK_SLASH;
+		//keyBinding[4]=16;
+		keyBinding[5]=KeyEvent.VK_PERIOD;
+		//keyBinding[6]=17;
+		keyBinding[6]=KeyEvent.VK_SHIFT;
+
 		shield = new Shield(this,20,200);
 	}
 	public void keyUpdate(KeyEvent keyevent, boolean pressed) {
@@ -44,19 +48,19 @@ public class Player extends Entity implements Observer{
 		for(int i = 0; i < controls.length; i++){
 			if(controls[i]){
 				switch(i){
-				case 0: location = new Point2D.Double(location.getX(),location.getY()-speed); System.out.println("w"); break;
-				case 1: location = new Point2D.Double(location.getX(),location.getY()+speed); System.out.println("s"); break;
-				case 2: location = new Point2D.Double(location.getX()-speed,location.getY()); System.out.println("a"); break;
-				case 3: location = new Point2D.Double(location.getX()+speed,location.getY()); System.out.println("d"); break;
+				case 0: location = new Point2D.Double(location.getX(),location.getY()-speed); /*System.out.println("w"); */break;
+				case 1: location = new Point2D.Double(location.getX(),location.getY()+speed); /*System.out.println("s"); */break;
+				case 2: location = new Point2D.Double(location.getX()-speed,location.getY()); /*System.out.println("a"); */break;
+				case 3: location = new Point2D.Double(location.getX()+speed,location.getY()); /*System.out.println("d"); */break;
 				case 4: shield.enabled = true; break;
 				case 5: shoot(); break;
 				case 6: speed = SLOW; break;
 				}
 			}
 		}	
-//		if(!controls[4]){
-//			shield.enabled = false;
-//		}
+		if(!controls[4]){
+			shield.enabled = false;
+		}
 		if(!controls[6]){
 			speed = FAST;
 		}

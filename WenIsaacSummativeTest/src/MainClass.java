@@ -24,6 +24,7 @@ interface Observable{
 /** TODO:
 	-Tweak gameplay
 	-Shielding mechanic??
+	-WHERE DID MY ASSETS GO?
 	https://docs.oracle.com/javase/tutorial/essential/concurrency/memconsist.html
  **/
 public class MainClass extends Applet implements ActionListener, KeyListener, MouseListener, MouseMotionListener, Observable{
@@ -68,8 +69,8 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 		menu.addButton(2, "Instructions", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/2), menu.dFont, Color.red);
 		Font intstructionFont = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/25));
 		instructions.addText("You are the red dot, avoid getting hit. Kill the boss to win", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/8), intstructionFont, Color.white);
-		instructions.addText("Arrow keys to move, space bar to shoot,", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/4), intstructionFont, Color.white);
-		instructions.addText("shift for more percise movement, escape to pause.", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()*3/8), intstructionFont, Color.white);
+		instructions.addText("I will make rebindable keys later lol,", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/4), intstructionFont, Color.white);
+		instructions.addText(":/", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()*3/8), intstructionFont, Color.white);
 		instructions.addButton(0, "Back", new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()/2), menu.dFont, Color.red);
 	}
 	public void menuUpdate(){
@@ -160,15 +161,17 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 						for(int j = ((Boss)entities.get(i)).bullets.size()-1; j >= 0; j--){
 							((Boss)entities.get(i)).bullets.get(j).move();
 							if(((Player)entities.get(k)).shield.enabled){
-//								if(collide(((Boss)entities.get(i)).bullets.get(j),((Player)entities.get(k)).shield)){
-//									((Boss)entities.get(i)).bullets.remove(((Boss)entities.get(i)).bullets.get(j));
-//									((Player)entities.get(k)).shield.hit();
-//								}
+								if(collide(((Boss)entities.get(i)).bullets.get(j),((Player)entities.get(k)).shield)){
+									//((Boss)entities.get(i)).bullets.remove(((Boss)entities.get(i)).bullets.get(j));
+									((Player)entities.get(k)).shield.hit();
+								}
 							}
-							if(collide(((Boss)entities.get(i)).bullets.get(j),((Player)entities.get(k)))){
-								((Boss)entities.get(i)).bullets.remove(((Boss)entities.get(i)).bullets.get(j));
-								roundStart();
-								pause();								
+							else{
+								if(collide(((Boss)entities.get(i)).bullets.get(j),((Player)entities.get(k)))){
+									((Boss)entities.get(i)).bullets.remove(((Boss)entities.get(i)).bullets.get(j));
+									roundStart();
+									pause();								
+								}
 							}
 						}
 					}
