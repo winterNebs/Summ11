@@ -23,15 +23,14 @@ public class Shield extends Entity{
 	public void update(){
 		size = new Point2D.Double(user.size.getX()+shieldSize,user.size.getY()+shieldSize);
 		location = new Point2D.Double(user.location.getX()-(shieldSize/2),user.location.getY()-(shieldSize/2));
-		if(coolDown > 0){
+		if(coolDown > 0 && MainClass.isPlaying){
 			enabled = false;
 			coolDown--;
 		}
 	}
 	public Image draw(Image i, Graphics b){
-		update();
 		if(coolDown==0){
-			b.setColor(user.color);
+			b.setColor(user.COLOR);
 			b.drawOval((int)location.getX(), (int)location.getY(), (int)size.getX(), (int)size.getY());
 		}			
 		return i;
@@ -49,6 +48,14 @@ public class Shield extends Entity{
 		}
 		else{
 			return "Shield Ready";
+		}
+	}
+	public void activate(boolean state){
+		if(state&&coolDown==0){
+			enabled = true;
+		}
+		else{
+			enabled = false;
 		}
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 public class Button extends Text{											
 	public int number;
 	public boolean isClicked;
+	private Color original;
 	public Button(){
 		number = -1;
 	}
@@ -14,6 +15,7 @@ public class Button extends Text{
 		text = t;
 		location = l;
 		font = f;
+		original = c;
 		color = c;
 		draw();
 	}
@@ -32,15 +34,14 @@ public class Button extends Text{
 	}
 	public void hovered(boolean hovered, boolean clicked){
 		if(hovered){
-			color = Color.blue;
+			color = new Color(255 - original.getRed(), 255 - original.getGreen(), 255 - original.getBlue());
 			isClicked = clicked;
 			if(isClicked){
 				color = Color.white;
 			}
 		}
 		else{
-			color = Color.red;
+			color = original;
 		}
 	}
-	
 }

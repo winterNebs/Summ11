@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class MainMenu implements Observer{
 	private Image image;										//Image to draw on
 	private Graphics buffer;									//Drawer to draw on the image (not a buffer really, but i copy pasted)
-	public Font dFont; 											//Default font
+	public static Font dFont = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/15)); //Default font
 	private ArrayList<Button> buttons = new ArrayList<Button>();//Array of all our buttons on the menu
 	private ArrayList<Text> texts = new ArrayList<Text>();		//Array of all our Text on the menu
 	public boolean enabled = false;								//Boolean for (should the menu appear and work)
@@ -24,8 +24,7 @@ public class MainMenu implements Observer{
 		image = i;
 		buffer = b;
 		enabled = e;
-		dFont = new Font("TimesRoman", Font.PLAIN, (int)(MainClass.PLAY_FIELD_SIZE.getX()/15));
-	}
+		}
 	public MainMenu(){/**Gross default constructor*/}
 	public Image draw(){
 		//Draws all the buttons on the image, returns that image so the mainclass can draw it
@@ -54,6 +53,9 @@ public class MainMenu implements Observer{
 	public ArrayList<Button> updater(){
 		//Returns list of buttons
 		return buttons;
+	}
+	public void updateText(int i, String s){
+		texts.get(i).text = s;
 	}
 	public void addButton(int n, String t, Point2D l, Font f, Color c){
 		//Creates new buttons
