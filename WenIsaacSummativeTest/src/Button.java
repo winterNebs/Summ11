@@ -1,39 +1,28 @@
-/** what am i doing */
+//Isaac Wen
+//2017-05-08
+//A little game in the "Bullet Hell" genre 
 import java.awt.*;
 import java.awt.geom.Point2D;
-public class Button extends Text{											
-	public int number;
-	public boolean isClicked;
-	private Color original;
+public class Button extends Text{//Clickable text									
+	public int number;			//Number of the button
+	public boolean isClicked;	//Whether the button is clicked or not
+	private Color original;		//The original color of the button
 	public Button(){
-		number = -1;
+		number = -1;			//Default constructor
 	}
 	public Button(int n,Image i, Graphics b,String t, Point2D l, Font f, Color c){
-		number = n;
-		image = i;
-		buffer = b;
-		text = t;
-		location = l;
-		font = f;
-		original = c;
-		color = c;
-		draw();
-	}
-	public Image draw(){
-		Rectangle rect = new Rectangle();
-		FontMetrics metrics = buffer.getFontMetrics(font);
-		//Sets the size of the rectangle to the size of the text
-		rect.setBounds(rectangleBounds(new Point2D.Double(metrics.stringWidth(text), metrics.getHeight()), location));
-		buffer.setColor(Color.black);
-		buffer.fillRect(rect.x, rect.y, rect.width, rect.height);
-		buffer.setColor(color);
-		drawCenteredString(buffer, text, rect, font);
-		buffer.drawRect(rect.x, rect.y, rect.width, rect.height);
-		bounds = new Rectangle(rect);
-		return image;
+		number = n;				//Constructor stuff
+		image = i;				//
+		buffer = b;				//
+		text = t;				//
+		location = l;			//
+		font = f;				//
+		original = c;			//
+		color = c;				//
+		draw();					//Draws the button
 	}
 	public void hovered(boolean hovered, boolean clicked){
-		if(hovered){
+		if(hovered){			//Changes the color of the button when hovered
 			color = new Color(255 - original.getRed(), 255 - original.getGreen(), 255 - original.getBlue());
 			isClicked = clicked;
 			if(isClicked){
