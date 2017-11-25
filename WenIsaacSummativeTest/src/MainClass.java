@@ -27,7 +27,7 @@ interface Observable{
 	public void notifyObservers(MouseEvent mouseevent, boolean clicked);
 }
 public class MainClass extends Applet implements ActionListener, KeyListener, MouseListener, MouseMotionListener, Observable{
-	final Point2D RESOLUTION = new Point2D.Double(3000,1800);
+	final Point2D RESOLUTION = new Point2D.Double(1280,720);
 	private static final long serialVersionUID = 1L;
 	volatile Timer timer = new Timer(10, this);		//Declare timer and init
 	volatile Image offscreen;						//Double buffer image **
