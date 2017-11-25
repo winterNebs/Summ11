@@ -44,9 +44,9 @@ public class MainClass extends Applet implements ActionListener, KeyListener, Mo
 	Image bossState1;								//The images for the boss
 	Image bossState2;
 	Image bossState3;
-	final int pathetic = 400;						//Constant values representing the difficulty
-	final int easy = 100;							//
-	final int medium = 50;							//Lower is harder
+	final int pathetic = 600;						//Constant values representing the difficulty
+	final int easy = 200;							//
+	final int medium = 100;							//Lower is harder
 	final int COUNTDOWN = 360;						//Count down constants for when you win
 	int difficulty = pathetic;						//Default difficulty
 	int countDown = COUNTDOWN;						//Countdown	

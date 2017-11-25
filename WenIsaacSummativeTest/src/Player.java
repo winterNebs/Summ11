@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Player extends Entity implements Observer{
 	private final int FAST = 4;			//Constants for the players movement speed
 	private final int SLOW = 1;			//Fast and slow
-	private final Point2D BULLET_SIZE = new Point2D.Double(10,10);					//Size for players bullets
+	private final Point2D BULLET_SIZE = new Point2D.Double(5,5);					//Size for players bullets
 	private boolean controls[] = {false,false,false,false,false,false,false,false};	//Array for player's active controls
 	private int keyBinding[];														//List of keybindings
 	private double cooldown;			//Cooldown for bomb
@@ -27,7 +27,7 @@ public class Player extends Entity implements Observer{
 		name = "player";				//Constructor stuff
 		speed = FAST;					//
 		location = new Point2D.Double(MainClass.PLAY_FIELD_SIZE.getX() / 2, MainClass.PLAY_FIELD_SIZE.getY()+10);	//Starts the player at the bottom center of the screen
-		size = new Point2D.Double(15,15);//
+		size = new Point2D.Double(11,11);//
 		COLOR = Color.red;				//
 		color = COLOR;					// More constructor stuff
 		cooldownColor = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());				//Inverts color for player

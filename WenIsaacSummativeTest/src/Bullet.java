@@ -9,7 +9,7 @@ public class Bullet extends Entity {
 	public Bullet(){
 		name = "Default";					//Constructor stuff
 		location = new Point2D.Double(0,0);	//
-		size = new Point2D.Double(10,10);	//
+		size = new Point2D.Double(5,5);	//
 		color = Color.RED;					//
 		speed = 0;							//
 		angle = 0;							//
